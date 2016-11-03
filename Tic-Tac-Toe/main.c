@@ -2,29 +2,42 @@
 #include<stdlib.h>
 #include<ctype.h>
 
+typedef struct LinkedList {
+	int coordinate[2]; //the values stored in this array are the row and column positions of legal moves
+	int score; //this will serve as a basis on whether the legal move (defined by the coordinates above) is good or bad
+	struct LinkedList *next; //this points to another legal action/move
+} LinkedList;
+
 typedef struct Player {
 	unsigned int turn : 1;
 	char symbol;
 } Player;
 
+Player *computer = NULL;
+Player *user = NULL;
+
 #include "headers/macros.h"
+#include "headers/Processing Functions/update.h"
 #include "headers/IO Functions/IO.h"
+#include "headers/Processing Functions/assess.h"
 #include "headers/Memory Management/init.h"
 #include "headers/Memory Management/cleanup.h"
-#include "headers/Processing Functions/process.h"
 
 int main(void) {
+	//due to an eclipse bug...
+	setvbuf(stdout, NULL, _IONBF, 0);
+
 	//variable declarations
-	Player *computer = NULL;
-	Player *user = NULL;
+	LinkedList *legalMoves = NULL;
 	char **board = NULL;
-	int move[2] = { 0, 0 };
+	int latestMove[2] = { 0, 0 };
 	int turn = 1;
 
 	//initializations
 	InitPlayer(&computer);
 	InitPlayer(&user);
 	InitBoard(&board);
+	InitLegalMoves(&legalMoves);
 	InitGame(&computer, &user);
 
 	//display the initial state of the board
@@ -37,21 +50,21 @@ int main(void) {
 		if((turn & 1) == user->turn) {
 			printf("\nUSER'S TURN:\n");
 			//get user's move and update the board
-			getPlayersMove(move, board);
-			updateBoard(&board, move, user->symbol);
+			getPlayersMove(latestMove,&legalMoves);
+			updateBoard(&board, latestMove, user->symbol);
 		}
 		//else if it's computer's turn
 		else {
-			//get computer's move and update the board
-			//getComputersMove(move, board);
 			printf("\nCOMPUTER'S TURN:\n");
-			//updateBoard(&board, move, computer->symbol);
+			//here's where things get crazy
+			findBestMove(latestMove, legalMoves, board, 0);
+			updateBoard(&board, latestMove, computer->symbol);
 		}
 
 		//display the board to the screen
 		displayBoard(board);
 
-		if(checkForWinner(board, move) == 1) {
+		if(checkForWinner(board, latestMove) == 1) {
 			congratulatePlayer(((turn & 1) == computer->turn)? computer->symbol : user->symbol);
 			break;
 		}
@@ -64,6 +77,8 @@ int main(void) {
 	destroyPlayer(&computer);
 	destroyPlayer(&user);
 	destroyBoard(&board);
+	destroyLinkedList(&legalMoves);
 
+	//...and exit
 	return EXIT_SUCCESS;
 }
