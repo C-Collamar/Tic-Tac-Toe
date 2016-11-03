@@ -70,7 +70,7 @@ void getPlayersMove(int *coordinates, LinkedList **legalMoves) {
 				if( (coordinates[0] == currentNode->coordinate[0]) &&
 					(coordinates[1] == currentNode->coordinate[1]))
 				{
-					/* remove this move from the 'legal moves' list to make it invalid if the user re-enters that move.
+					/* remove that move from the 'legal moves' list to make it invalid once the user re-enters that move.
 					 * For some reason though, I cannot properly delete the head node using only 'currentNode' and 'previousNode' as parameters
 					 * so I'm forced to messily include the head node itself. I'll see if I can work around this on my spare time...
 					 */
@@ -79,10 +79,12 @@ void getPlayersMove(int *coordinates, LinkedList **legalMoves) {
 					return;
 				}
 
+				//increment each pointer to the next nodes they're pointing at
 				previousNode = currentNode;
 				currentNode = currentNode->next;
 			}
 
+			//if the user's move is not on the list of available moves
 			printf("Invalid move. The location has already been occupied.\n");
 		}
 
