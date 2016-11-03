@@ -37,4 +37,16 @@ void InitGame(Player **computer, Player **user) {
 	(*user)->symbol = 'o';
 }
 
+// This function initializes the initial possible moves both players can make
+void InitLegalMoves(LinkedList **legalMoves) {
+	int x = -1, y;
+
+	while(++x < BOARD_HEIGHT) {
+		y = -1;
+		while(++y < BOARD_WIDTH) {
+			addLegalMove(&legalMoves, x, y);
+		}
+	}
+}
+
 #endif /* INIT_H_ */
