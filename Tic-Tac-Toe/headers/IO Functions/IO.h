@@ -2,13 +2,21 @@
 #define IO_H_
 
 void displayBoard(char **board) {
-	int x, y;
+	int x, y, z;
 
-	for(x = 0; x < BOARD_HEIGHT; ++x) {
+	printf("  ");
+	for(z = 0; z < BOARD_WIDTH; ++z) {
+		printf("  %i ", z);
+	}
+
+	printf("\n");
+
+	for(z = 0, x = 0; x < BOARD_HEIGHT; ++z, ++x) {
+		printf("  ");
 		for(y = BOARD_WIDTH * 4; y; --y)
 			printf("%c", !(y % 4)? '+' : '-');
 
-		printf("-\n");
+		printf("-\n%i ", z);
 
 		for(y = 0; y < BOARD_WIDTH; ++y)
 			printf("| %c ", board[x][y]);
@@ -16,6 +24,7 @@ void displayBoard(char **board) {
 		printf("|\n");
 	}
 
+	printf("  ");
 	for(y = BOARD_WIDTH * 4; y; --y)
 		printf("%c", !(y % 4)? '+' : '-');
 
@@ -40,7 +49,10 @@ int userPlaysFirst(void) {
 	return (choice == 'y')? 1 : 0;
 }
 
-void getPlayersMove(int *coordinates, char **board) {
+void getPlayersMove(int *coordinates, LinkedList **legalMoves) {
+	LinkedList *currentNode = *legalMoves;
+	LinkedList *previousNode = NULL;
+
 	//keep asking for user's move (via coordinates) until he enters a valid move
 	while(1) {
 		printf("Enter row coordinate: ");
@@ -48,18 +60,34 @@ void getPlayersMove(int *coordinates, char **board) {
 		printf("Enter column coordinate: ");
 		scanf("%i", &coordinates[1]);
 
-		/* verifies if the user's move is legal
-		 * by checking on weather that position is already occupied
-		 */
+		// if the user entered a location within the board
 		if( (coordinates[0] >= 0 && coordinates[0] < BOARD_HEIGHT) &&
-			(coordinates[1] >= 0 && coordinates[1] < BOARD_WIDTH) &&
-			(board[coordinates[0]][coordinates[1]] == BLANK_CHARACTER))
+			(coordinates[1] >= 0 && coordinates[1] < BOARD_WIDTH))
 		{
-			break;
+			//check if the user entered a non-occupied board location
+			while(currentNode != NULL) {
+				//if the input move is a legal move
+				if( (coordinates[0] == currentNode->coordinate[0]) &&
+					(coordinates[1] == currentNode->coordinate[1]))
+				{
+					/* remove this move from the 'legal moves' list to make it invalid if the user re-enters that move.
+					 * For some reason though, I cannot properly delete the head node using only 'currentNode' and 'previousNode' as parameters
+					 * so I'm forced to messily include the head node itself. I'll see if I can work around this on my spare time...
+					 */
+					removeLegalMove(&legalMoves, &currentNode, &previousNode);
+
+					return;
+				}
+
+				previousNode = currentNode;
+				currentNode = currentNode->next;
+			}
+
+			printf("Invalid move. The location has already been occupied.\n");
 		}
 
 		//otherwise, inform the user that his/her move is invalid
-		printf("Invalid move. The location is either out of bounds or has been occupied.\n");
+		printf("Invalid move. The location is out of bounds.\n");
 	}
 }
 
