@@ -1,7 +1,6 @@
 # Tic-Tac-Toe-Artificial-Intelligence
 A Tic-Tac-Toe implementation using minimax algorithm
 
-Welcome to the Tic-Tac-Toe-Artificial-Intelligence wiki!
 
 Aside from doing this as a hobby, this project will serve as my introductory experience to artificial intelligence (in which I'm probably not ready for lol).
 
