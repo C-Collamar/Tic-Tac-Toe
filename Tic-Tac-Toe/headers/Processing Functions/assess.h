@@ -4,10 +4,10 @@
 /* This function checks if the last move results to a win-situation;
  * returns 1 if the winning alignment is detected, otherwise, zero.
  */
-int checkForWinner(char **board, int *lastMove) {
+int checkForWinner(GameBoard board, int *lastMove) {
 	int terminator; // 'terminator' will serve as the mark of the last horizontal/vertical/diagonal element to check
 	int count;	// 'count'  counts the number of same consecutive symbols
-	char symbol = board[lastMove[0]][lastMove[1]]; // 'symbol' is the symbol that 'count' counts
+	char symbol = board.state[lastMove[0]][lastMove[1]]; // 'symbol' is the symbol that 'count' counts
 	int column;
 	int row;
 
@@ -21,7 +21,7 @@ int checkForWinner(char **board, int *lastMove) {
 	{
 		//increment 'count' if the control reads in the same symbol
 		//else, reset 'count' to zero
-		count = (board[row][column] == symbol)? count + 1 : 0;
+		count = (board.state[row][column] == symbol)? count + 1 : 0;
 
 		//if the winning alignment is detected
 		if(count == ALIGNMENT_NUMBER) {
@@ -41,7 +41,7 @@ int checkForWinner(char **board, int *lastMove) {
 		/* increment 'count' if the same symbol has been read in
 		 * else, reset 'count' to zero
 		 */
-		count = (board[row][column] == symbol)? count + 1 : 0;
+		count = (board.state[row][column] == symbol)? count + 1 : 0;
 
 		//if the winning alignment is detected
 		if(count == ALIGNMENT_NUMBER) {
@@ -63,7 +63,7 @@ int checkForWinner(char **board, int *lastMove) {
 	}
 
 	for( ; (row >= 0 && row > lastMove[0] - ALIGNMENT_NUMBER) && (column < BOARD_WIDTH && column < lastMove[1] + ALIGNMENT_NUMBER); --row, ++column) {
-		count = (board[row][column] == symbol)? count + 1 : 0;
+		count = (board.state[row][column] == symbol)? count + 1 : 0;
 
 		//if the winning alignment is detected
 		if(count == ALIGNMENT_NUMBER) {
@@ -83,7 +83,7 @@ int checkForWinner(char **board, int *lastMove) {
 	}
 
 	for( ; (row >= 0 && row > lastMove[0] - ALIGNMENT_NUMBER) && (column >= 0 && column > lastMove[1] - ALIGNMENT_NUMBER); --row, --column) {
-		count = (board[row][column] == symbol)? count + 1 : 0;
+		count = (board.state[row][column] == symbol)? count + 1 : 0;
 
 		//if the winning alignment is detected
 		if(count == ALIGNMENT_NUMBER) {
@@ -101,7 +101,7 @@ int checkForWinner(char **board, int *lastMove) {
  * board - the board used for analyzing the current game state
  * depthCount - keeps track on the current depth of the game tree
  */
-void findBestMove(int *move, LinkedList *legalMoves, char **board, int depthCount) {
+void findBestMove(int *move, LinkedList *legalMoves, GameBoard board, int depthCount) {
 	printf("(Under development)\n");
 }
 
