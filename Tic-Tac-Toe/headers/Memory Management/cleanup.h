@@ -1,19 +1,20 @@
 #ifndef CLEANUP_H_
 #define CLEANUP_H_
 
-void destroyPlayer(Player **player) {
-	free(*player);
+void destroyPlayer(Player *player) {
+	free(player);
 	player = NULL;
 }
 
-void destroyBoard(char ***board) {
+void destroyBoard(GameBoard *board) {
 	int x;
 
 	for(x = 0; x < BOARD_WIDTH; ++x) {
-		free((*board)[x]);
+		free(board->state[x]);
 	}
 
-	free(*board);
+	free(board->state);
+	free(board);
 }
 
 void destroyLinkedList(LinkedList **list) {
