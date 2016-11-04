@@ -2,8 +2,8 @@
 #define UPDATE_H_
 
 //This function updates an element value of the board
-void updateBoard(char ***board, int *coordinate, char symbol) {
-	(*board)[coordinate[0]][coordinate[1]] = symbol;
+void updateBoard(GameBoard *board, int *coordinate, char symbol) {
+	board->state[coordinate[0]][coordinate[1]] = symbol;
 }
 
 //This function inserts the x and y coordinates into the list of legal moves; which will be used later on
