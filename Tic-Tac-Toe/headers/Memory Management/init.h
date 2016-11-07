@@ -30,16 +30,40 @@ void InitGame(Player *computer, Player *user) {
 	user->symbol = 'o';
 }
 
-// This function initializes the initial possible moves both players can make
-void InitLegalMoves(LinkedList **legalMoves) {
+LinkedList * getPossibleMoves(GameBoard board) {
+	//create a pointer to the head of the list of legal moves
+	LinkedList *head = NULL;
+
+	//create a new node to connect to the list
+	LinkedList *legalMove = NULL;
+
+	//check each squares in the board for vacant squares
 	int x = -1, y;
 
 	while(++x < BOARD_HEIGHT) {
 		y = -1;
 		while(++y < BOARD_WIDTH) {
-			addLegalMove(&legalMoves, x, y);
+			//if a vacant position is found
+			if(board.state[x][y] == BLANK_CHARACTER) {
+
+				//check if memory allocation failed
+				if((legalMove = malloc(sizeof(LinkedList))) == NULL) {
+					printf("ERROR: Memory allocation failed.\n");
+					exit(EXIT_FAILURE);
+				}
+
+				//else, add that board coordinate to that node
+				legalMove->coordinate[0] = x;
+				legalMove->coordinate[1] = y;
+
+				//connect that node to the list
+				legalMove->next = head;
+				head = legalMove;
+			}
 		}
 	}
+
+	return head;
 }
 
 #endif /* INIT_H_ */
