@@ -48,19 +48,12 @@ int main(void) {
 	InitBoard(&board);
 	InitGame(&computer, &user);
 
-//	LinkedList *temp;
-
 	//display the initial state of the board
 	printf("\nINITIAL BOARD STATE:\n");
 	displayBoard(board);
 
 	//while there's no winner, increment turn
 	while(turn <= BOARD_HEIGHT * BOARD_WIDTH) {
-/*		temp = legalMoves;
-		while(temp != NULL) {
-			printf("\t[%i, %i]\n", temp->coordinate[0], temp->coordinate[1]);
-			temp = temp->next;
-*/
 		//if it's user's turn
 		if((turn & 1) == user.turn) {
 			printf("\nUSER'S TURN:\n");
