@@ -4,13 +4,17 @@
 #include "headers/macros.h"
 
 typedef struct Player {
-	unsigned int turn : 1;
-	char symbol;
+	int move[2]; //represents what the player's move/action is
+	unsigned int turn : 1; //this determines if it's the player's turn
+	char symbol; //this represents the symbol for the players' pieces ('X' and 'O' by default)
 } Player;
+
+Player computer;
+Player user;
 
 /*[NEEDS IMROVEMENT] I did this "workaround" to pass the board by value to avoid modifying the actual board state
  * To make more sense - for some functions, I wanted to pass the board of type 'char **' by value (passing it as of type 'char **', and
- * the parameter expecting it is of type 'char **'), the board still gets modified :(
+ * the parameter expecting it is of type 'char **'), but the board still gets modified :(
  */
  typedef struct GameBoard {
 	char state[BOARD_HEIGHT][BOARD_WIDTH]; //this represents the state of the board (i.e. the positions of each piece on the board)
@@ -24,20 +28,16 @@ typedef struct LinkedList {
 
 #include "headers/Processing Functions/update.h"
 #include "headers/IO Functions/IO.h"
-#include "headers/Processing Functions/assess.h"
 #include "headers/Memory Management/init.h"
 #include "headers/Memory Management/cleanup.h"
+#include "headers/Processing Functions/assess.h"
 
 int main(void) {
 	//due to an eclipse bug...
 	setvbuf(stdout, NULL, _IONBF, 0);
 
 	//variable declarations
-	Player computer;
-	Player user;
 	GameBoard board;
-	LinkedList *legalMoves = NULL;
-	int latestMove[2] = { 0, 0 };
 	int turn = 1;
 
 	printf("hello");
@@ -46,8 +46,9 @@ int main(void) {
 	InitPlayer(&computer);
 	InitPlayer(&user);
 	InitBoard(&board);
-	InitLegalMoves(&legalMoves);
 	InitGame(&computer, &user);
+
+//	LinkedList *temp;
 
 	//display the initial state of the board
 	printf("\nINITIAL BOARD STATE:\n");
@@ -55,39 +56,58 @@ int main(void) {
 
 	//while there's no winner, increment turn
 	while(turn <= BOARD_HEIGHT * BOARD_WIDTH) {
+/*		temp = legalMoves;
+		while(temp != NULL) {
+			printf("\t[%i, %i]\n", temp->coordinate[0], temp->coordinate[1]);
+			temp = temp->next;
+*/
 		//if it's user's turn
 		if((turn & 1) == user.turn) {
 			printf("\nUSER'S TURN:\n");
-			//get user's move and update the board
-			getPlayersMove(latestMove,&legalMoves);
-			updateBoard(&board, latestMove, user.symbol);
+
+			//get user's move
+			getPlayersMove(user.move, board);
+
+			//update the board
+			updateBoard(&board, user.move, user.symbol);
+
+			//display the board on the screen
+			printf("\nUPDATED BOARD STATE:\n");
+			displayBoard(board);
+
+			//check if the user wins
+			if(checkForWinner(board, user.move) == 1) {
+				congratulatePlayer(user.symbol);
+				break;
+			}
 		}
 		//else if it's computer's turn
 		else {
 			printf("\nCOMPUTER'S TURN:\n");
-			//here's where things get crazy
-			findBestMove(latestMove, legalMoves, board, 0);
-			updateBoard(&board, latestMove, computer.symbol);
+
+			//let the A.I. do its thing
+			findBestMove(computer.move, board);
+
+			//update the board
+			updateBoard(&board, computer.move, computer.symbol);
+
+			//display it on the screen
+			printf("\nUPDATED BOARD STATE:\n");
+			displayBoard(board);
+
+			//see if the computer wins
+			if(checkForWinner(board, computer.move) == 1) {
+				congratulatePlayer(computer.symbol);
+				break;
+			}
 		}
 
-		//display the board to the screen
-		printf("\nUPDATED BOARD STATE:\n");
-		displayBoard(board);
-
-		if(checkForWinner(board, latestMove) == 1) {
-			congratulatePlayer(((turn & 1) == computer.turn)? computer.symbol : user.symbol);
-			break;
-		}
-
-		//and of course,increment each turn
+		//increment each turn
 		++turn;
 	}
 
-	//properly deallocate variables
-	destroyPlayer(&computer);
-	destroyPlayer(&user);
+	//properly deallocate pointer variables
 	destroyBoard(&board);
-	destroyLinkedList(&legalMoves);
 
 	//...and exit
 	return EXIT_SUCCESS;
