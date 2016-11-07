@@ -13,7 +13,7 @@ int checkForWinner(GameBoard board, int *lastMove) {
 
 	//check for horizontal alignment
 	count = 0;
-	terminator = lastMove[1] + ALIGNMENT_NUMBER;
+	terminator = (lastMove[1] + ALIGNMENT_NUMBER >= BOARD_WIDTH)? BOARD_WIDTH : lastMove[1] + ALIGNMENT_NUMBER;
 	row = lastMove[0];
 	column = (lastMove[1] - ALIGNMENT_NUMBER <= 0)? 0 : lastMove[1] - ALIGNMENT_NUMBER + 1;
 
@@ -25,7 +25,7 @@ int checkForWinner(GameBoard board, int *lastMove) {
 
 		//if the winning alignment is detected
 		if(count == ALIGNMENT_NUMBER) {
-			printf("Horizontal alignment detected.\n");
+			//printf("Horizontal alignment detected\n");
 			return 1;
 		}
 	}
@@ -45,7 +45,7 @@ int checkForWinner(GameBoard board, int *lastMove) {
 
 		//if the winning alignment is detected
 		if(count == ALIGNMENT_NUMBER) {
-			printf("Vertical alignment detected.\n");
+			//printf("Vertical alignment detected\n");
 			return 1;
 		}
 	}
@@ -67,7 +67,7 @@ int checkForWinner(GameBoard board, int *lastMove) {
 
 		//if the winning alignment is detected
 		if(count == ALIGNMENT_NUMBER) {
-			printf("/ alignment detected.\n");
+			//printf("'/' alignment detected\n");
 			return 1;
 		}
 	}
@@ -87,7 +87,7 @@ int checkForWinner(GameBoard board, int *lastMove) {
 
 		//if the winning alignment is detected
 		if(count == ALIGNMENT_NUMBER) {
-			printf("\\ alignment detected.\n");
+			//printf("'\' alignment detected\n");
 			return 1;
 		}
 	}
@@ -112,34 +112,21 @@ int tie(GameBoard board) {
 	return 1;
 }
 
-/* DESCRIPTION: This function rates the move based on the board
- * state and the number of turns it takes to win or not loose
- *
- * PARAMETERS:
- *  - board: the current board state
- *  - move: the move to be applied on the current board state
- *  - legalMoves: the list of valid moves left
- *  - treeDepth: the height of the tree
- *               Indicates the number of times this function has been recursed, and who's turn will it be
- *               Its initial value passed is zero, which means we know that it's the computer's turn if treeDepth % 1 equals zero
- */
 int minimax(GameBoard board, int *move, int treeDepth) {
-	printf("TREE DEPTH: %i\n", treeDepth);
-
+	//check if computer reaches its level of thinking
 	if(treeDepth > TREE_DEPTH) {
 		return 0;
 	}
 
-	//first, execute the input move by placing the symbol of the computer/ user, to the board
+	//apply the input move to the current board state
 	updateBoard(&board, move, ((treeDepth & 1) == 0)? computer.symbol : user.symbol);
-	displayBoard(board);
 
 	//if executing that move results to winning
 	if(checkForWinner(board, move) == 1) {
 		/* return 1 if it's the computer was the one who won in this scenario.
 		 * Otherwise, return -1, which tells the computer that this is a bad news for him (or her haha)
 		 */
-		return ((treeDepth & 1) == 0)? 1 : -1;
+		return (((treeDepth & 1) == 0)? 1 : -1) - treeDepth;
 	}
 
 	//also check if that move resulted in a tie
@@ -161,7 +148,7 @@ int minimax(GameBoard board, int *move, int treeDepth) {
 	currentLegalMove = legalMoves;
 	int finalScore = legalMoves->score;
 
-	//if it's the computer's move that the computer thinks of
+	//if it's computer's turn that the computer thinks of
 	if((treeDepth & 1) == 0) {
 		//get the highest score among the scores, since the computer wants to maximize its chance of winning
 		while(currentLegalMove != NULL) {
@@ -172,15 +159,15 @@ int minimax(GameBoard board, int *move, int treeDepth) {
 	}
 	//else if it's the user's turn that the computer thinks of
 	else {
-			//get the lowest score, since the user wants to minimize the computer's chances of winning
-			while(currentLegalMove != NULL) {
-				if(currentLegalMove->score < finalScore)
-					finalScore = currentLegalMove->score;
-				currentLegalMove = currentLegalMove->next;
-			}
+		//get the lowest score, since the user wants to minimize the computer's chances of winning
+		while(currentLegalMove != NULL) {
+			if(currentLegalMove->score < finalScore)
+				finalScore = currentLegalMove->score;
+			currentLegalMove = currentLegalMove->next;
 		}
+	}
 
-	//deallocate the list properly and return the final score for the node which this function was called
+	//properly deallocate the list and return the final score for the node which this function was called
 	destroyLinkedList(&legalMoves);
 	return finalScore;
 }
@@ -207,11 +194,15 @@ void findBestMove(int *move, GameBoard board) {
 		currentLegalMove = currentLegalMove->next;
 	}
 
-	//reset 'currentLegalMove' to point at the start of the list of legal moves
-	currentLegalMove = legalMoves;
-
 	//declare a variable to compare scores and initialize it to the score of the fist legal move
 	int highestScore = legalMoves->score;
+
+	//initially set the chosen move to the first legal move
+	move[0] = legalMoves->coordinate[0];
+	move[1] = legalMoves->coordinate[1];
+
+	//reset 'currentLegalMove' to point to the next legal move
+	currentLegalMove = legalMoves->next;
 
 	//find the best move among the rated legal moves by finding the highest score among them
 	while(currentLegalMove != NULL) {
