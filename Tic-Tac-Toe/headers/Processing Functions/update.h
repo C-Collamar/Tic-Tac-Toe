@@ -34,19 +34,4 @@ void addLegalMove(LinkedList ***legalMoves, int row, int column) {
 	**legalMoves = newNode;
 }
 
-void removeLegalMove(LinkedList ***head, LinkedList **curr, LinkedList **prev) {
-	//if the node to be removed is the head in the list
-	if(*prev == NULL) {
-		*prev = (*curr)->next;
-		free(*curr);
-		//*curr = *prev;
-		**head = *prev;
-		return;
-	}
-
-	//else...
-	(*prev)->next = (*curr)->next;
-	free(*curr);
-}
-
 #endif /* UPDATE_H_ */
