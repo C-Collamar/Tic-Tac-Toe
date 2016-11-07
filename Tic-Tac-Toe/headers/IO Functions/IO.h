@@ -49,10 +49,7 @@ int userPlaysFirst(void) {
 	return (choice == 'y')? 1 : 0;
 }
 
-void getPlayersMove(int *coordinates, LinkedList **legalMoves) {
-	LinkedList *currentNode = *legalMoves;
-	LinkedList *previousNode = NULL;
-
+void getPlayersMove(int *coordinates, GameBoard board) {
 	//keep asking for user's move (via coordinates) until he enters a valid move
 	while(1) {
 		printf("Enter row coordinate: ");
@@ -64,25 +61,12 @@ void getPlayersMove(int *coordinates, LinkedList **legalMoves) {
 		if( (coordinates[0] >= 0 && coordinates[0] < BOARD_HEIGHT) &&
 			(coordinates[1] >= 0 && coordinates[1] < BOARD_WIDTH))
 		{
-			//check if the user entered a non-occupied board location
-			while(currentNode != NULL) {
-				//if the input move is a legal move
-				if( (coordinates[0] == currentNode->coordinate[0]) &&
-					(coordinates[1] == currentNode->coordinate[1]))
-				{
-					/* remove this move from the 'legal moves' list to make it invalid if the user re-enters that move.
-					 * For some reason though, I cannot properly delete the head node using only 'currentNode' and 'previousNode' as parameters
-					 * so I'm forced to messily include the head node itself. I'll see if I can work around this on my spare time...
-					 */
-					removeLegalMove(&legalMoves, &currentNode, &previousNode);
-
-					return;
-				}
-
-				previousNode = currentNode;
-				currentNode = currentNode->next;
+			//if the user entered a non-occupied board location
+			if(board.state[coordinates[0]][coordinates[1]] == BLANK_CHARACTER) {
+				return;
 			}
 
+			//else, tell the user that the square of his/her move already been occupied
 			printf("Invalid move. The location has already been occupied.\n");
 		}
 
