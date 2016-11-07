@@ -84,6 +84,8 @@ int main(void) {
 			//update the board
 			updateBoard(&board, computer.move, computer.symbol);
 
+			printf("Computer's move: [%i, %i]\n", computer.move[0], computer.move[1]);
+
 			//display it on the screen
 			printf("\nUPDATED BOARD STATE:\n");
 			displayBoard(board);
