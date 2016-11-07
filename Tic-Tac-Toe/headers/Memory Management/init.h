@@ -26,8 +26,9 @@ void InitGame(Player *computer, Player *user) {
 	computer->turn = (userPlaysFirst())? 0 : 1;
 	user->turn = (computer->turn == 1)? 0 : 1;
 
-	computer->symbol = 'x';
-	user->symbol = 'o';
+	//if computer plays first, mark it player X, otherwise player O
+	computer->symbol = (computer->turn == 1)? 'x' : 'o';
+	user->symbol = (user->turn == 1)? 'x' : 'o';
 }
 
 LinkedList * getPossibleMoves(GameBoard board) {
