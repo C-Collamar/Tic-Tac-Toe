@@ -3,7 +3,7 @@ A command-line Tic-Tac-Toe game applying minimax algorithm
 
 ---
 
-Aside from doing this as a hobby, this project will serve as my introductory experience to artificial intelligence (in which I'm probably not ready for LOL).
+Aside from being a hobby, I made this project to serve as my introductory experience to artificial intelligence programming (in which I'm probably not ready for LOL).
 
 Regarding the command-line part, I'm not really used to GUI programming **yet** (I currently only know some basic SDL API functions).
 
