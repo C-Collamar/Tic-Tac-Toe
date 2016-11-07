@@ -1,4 +1,4 @@
-# Tic-Tac-Toe-Artificial-Intelligence
+# Tic-Tac-Toe Artificial-Intelligence
 A command-line Tic-Tac-Toe game applying minimax algorithm
 
 ---
