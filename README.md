@@ -20,3 +20,5 @@ References:
 [minnimax algorithm - Youtube](https://www.youtube.com/watch?v=6ELUvkSkCts)
 
 [Tic Tac Toe: Understanding The Minimax Algorithm](http://neverstopbuilding.com/minimax)
+
+STATUS: Unfinished
