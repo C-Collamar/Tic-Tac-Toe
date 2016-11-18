@@ -21,4 +21,4 @@ References:
 
 [Tic Tac Toe: Understanding The Minimax Algorithm](http://neverstopbuilding.com/minimax)
 
-STATUS: Unfinished
+STATUS: Pending
