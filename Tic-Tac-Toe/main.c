@@ -33,14 +33,9 @@ typedef struct LinkedList {
 #include "headers/Processing Functions/assess.h"
 
 int main(void) {
-	//due to an eclipse bug...
-	setvbuf(stdout, NULL, _IONBF, 0);
-
 	//variable declarations
 	GameBoard board;
 	int turn = 1;
-
-	printf("hello");
 
 	//initializations
 	InitPlayer(&computer);
@@ -48,57 +43,63 @@ int main(void) {
 	InitBoard(&board);
 	InitGame(&computer, &user);
 
-	//display the initial state of the board
-	printf("\nINITIAL BOARD STATE:\n");
+	//clear the screen and display the initial board state
+	system("cls");
+	printf("BOARD STATE:\n");
 	displayBoard(board);
 
 	//while there's no winner, increment turn
 	while(turn <= BOARD_HEIGHT * BOARD_WIDTH) {
 		//if it's user's turn
 		if((turn & 1) == user.turn) {
-			printf("\nUSER'S TURN:\n");
+			printf("\nYOUR TURN:\n");
 
 			//get user's move
 			getPlayersMove(user.move, board);
 
-			//update the board
+			//update the board with the user's move
 			updateBoard(&board, user.move, user.symbol);
-
-			//display the board on the screen
-			printf("\nUPDATED BOARD STATE:\n");
-			displayBoard(board);
 
 			//check if the user wins
 			if(checkForWinner(board, user.move) == 1) {
-				congratulatePlayer(user.symbol);
+				printf("Congratulaions, you won the game.\n");
 				break;
 			}
 		}
-		//else if it's computer's turn
+		//if it's computer's turn
 		else {
-			printf("\nCOMPUTER'S TURN:\n");
-
-			//let the A.I. do its thing
+			//let the minimax algorithm do its thing
 			findBestMove(computer.move, board);
 
-			//update the board
+			//update the board with the computer's move
 			updateBoard(&board, computer.move, computer.symbol);
 
-			printf("Computer's move: [%i, %i]\n", computer.move[0], computer.move[1]);
-
-			//display it on the screen
-			printf("\nUPDATED BOARD STATE:\n");
+			//clear the screen and display the current board state
+			system("cls");
+			printf("BOARD STATE:\n");
 			displayBoard(board);
+
+			//display the computer's move
+			printf("Computer's move: [%i, %i]\n", computer.move[0], computer.move[1]);
 
 			//see if the computer wins
 			if(checkForWinner(board, computer.move) == 1) {
-				congratulatePlayer(computer.symbol);
+				printf("Game over. Computer has won the game.\n");
 				break;
 			}
 		}
 
 		//increment each turn
 		++turn;
+	}
+
+	//if it's a tie
+	if(turn > BOARD_HEIGHT * BOARD_WIDTH) {
+		system("cls");
+		printf("BOARD STATE:\n");
+		displayBoard(board);
+		printf("Computer's move: [%i, %i]\n", computer.move[0], computer.move[1]);
+		printf("It's a tie!\n");
 	}
 
 	//properly deallocate pointer variables
