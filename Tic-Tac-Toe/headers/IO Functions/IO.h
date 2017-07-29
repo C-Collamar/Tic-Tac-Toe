@@ -57,26 +57,17 @@ void getPlayersMove(int *coordinates, GameBoard board) {
 		printf("Enter column coordinate: ");
 		scanf("%i", &coordinates[1]);
 
-		// if the user entered a location within the board
+		// if the user entered a vacant location within the board
 		if( (coordinates[0] >= 0 && coordinates[0] < BOARD_HEIGHT) &&
-			(coordinates[1] >= 0 && coordinates[1] < BOARD_WIDTH))
+			(coordinates[1] >= 0 && coordinates[1] < BOARD_WIDTH) &&
+			board.state[coordinates[0]][coordinates[1]] == BLANK_CHARACTER)
 		{
-			//if the user entered a non-occupied board location
-			if(board.state[coordinates[0]][coordinates[1]] == BLANK_CHARACTER) {
-				return;
-			}
-
-			//else, tell the user that the square of his/her move already been occupied
-			printf("Invalid move. The location has already been occupied.\n");
+			return;
 		}
 
 		//otherwise, inform the user that his/her move is invalid
-		printf("Invalid move. The location is out of bounds.\n");
+		printf("Invalid move. Either the input coordinate is occupied or out of bounds.\n\n");
 	}
-}
-
-void congratulatePlayer(char player) {
-	printf("%c won the game.\n", (player == 'o')? 'o' : 'x');
 }
 
 #endif /* IO_H_ */
