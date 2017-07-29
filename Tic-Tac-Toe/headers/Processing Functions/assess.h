@@ -50,8 +50,6 @@ int checkForWinner(GameBoard board, int *lastMove) {
 		}
 	}
 
-	//I don't know how to explain the following codes in words
-
 	//check for positively sloped diagonal alignment
 	count = 0;
 	row = lastMove[0] + ALIGNMENT_NUMBER - 1;
@@ -121,18 +119,18 @@ int minimax(GameBoard board, int *move, int treeDepth) {
 	//apply the input move to the current board state
 	updateBoard(&board, move, ((treeDepth & 1) == 0)? computer.symbol : user.symbol);
 
-	//if executing that move results to winning
+	//if executing that move results to a win
 	if(checkForWinner(board, move) == 1) {
 		/* return 1 if it's the computer was the one who won in this scenario.
-		 * Otherwise, return -1, which tells the computer that this is a bad news for him (or her haha)
+		 * Otherwise, return -1, which tells the computer that this was a bad move
 		 */
-		return (((treeDepth & 1) == 0)? 1 : -1) - treeDepth;
+		return (((treeDepth & 1) == 0)? 10 : -10) - treeDepth;
 	}
 
 	//also check if that move resulted in a tie
-	if(tie(board))
+	if(tie(board)) {
 		return 0;
-
+	}
 	//if not, create a list of possible moves
 	LinkedList *legalMoves = getPossibleMoves(board);
 
@@ -141,7 +139,7 @@ int minimax(GameBoard board, int *move, int treeDepth) {
 
 	//get the scores for every possible move
 	while(currentLegalMove != NULL) {
-		currentLegalMove->score = minimax(board, currentLegalMove->coordinate, ++treeDepth);
+		currentLegalMove->score = minimax(board, currentLegalMove->coordinate, treeDepth + 1);
 		currentLegalMove = currentLegalMove->next;
 	}
 
@@ -149,7 +147,7 @@ int minimax(GameBoard board, int *move, int treeDepth) {
 	int finalScore = legalMoves->score;
 
 	//if it's computer's turn that the computer thinks of
-	if((treeDepth & 1) == 0) {
+	if((treeDepth & 1) == 1) {
 		//get the highest score among the scores, since the computer wants to maximize its chance of winning
 		while(currentLegalMove != NULL) {
 			if(currentLegalMove->score > finalScore)
@@ -187,17 +185,17 @@ void findBestMove(int *move, GameBoard board) {
 
 	//for each legal moves, determine their score. Higher score indicates better move
 	while(currentLegalMove != NULL) {
-		//the minimax function rates the move based on the board and the number of turns it takes to win or not loose
+		//the minimax function rates the move based on the board and the number of turns it takes to win or not lose
 		currentLegalMove->score = minimax(board, currentLegalMove->coordinate, 0);
 
-		//after rating that move, move on to the next
+		//do the same for the next move
 		currentLegalMove = currentLegalMove->next;
 	}
 
 	//declare a variable to compare scores and initialize it to the score of the fist legal move
 	int highestScore = legalMoves->score;
 
-	//initially set the chosen move to the first legal move
+	//initially set the chosen move to the first legal move (actually it should be assigned a vacant location)
 	move[0] = legalMoves->coordinate[0];
 	move[1] = legalMoves->coordinate[1];
 
